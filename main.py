@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import psycopg2
 from dotenv import load_dotenv
@@ -6,6 +7,15 @@ import os
 
 load_dotenv()
 app = FastAPI()
+
+# 👉 OVDE IDE CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # ili konkretan domen
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 📦 MODELI
 
