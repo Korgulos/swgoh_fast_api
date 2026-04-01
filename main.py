@@ -72,6 +72,39 @@ def get_players():
     ]
 
 
+@app.get("/players/{player_id}/territory_battles")
+def get_battles_by_player(player_id: int):
+    conn = get_conn()
+    cur = conn.cursor()
+
+    cur.execute(
+        """
+        SELECT tb.territory_battle_id, tb.player_id, p.name, tb.phase, tb.territory_points, tb.undeployed_gp, tb.checked_at
+        FROM territory_battles tb
+        JOIN players p ON p.player_id = tb.player_id
+        WHERE tb.player_id = %s
+        ORDER BY tb.territory_battle_id DESC
+        """,
+        (player_id,)
+    )
+
+    rows = cur.fetchall()
+    conn.close()
+
+    return [
+        {
+            "territory_battle_id": r[0],
+            "player_id": r[1],
+            "player_name": r[2],
+            "phase": r[3],
+            "territory_points": r[4],
+            "undeployed_gp": r[5],
+            "checked_at": r[6].isoformat() if r[6] else None,
+        }
+        for r in rows
+    ]
+
+
 # ➕ CREATE
 
 @app.post("/players")
